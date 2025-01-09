@@ -22,7 +22,6 @@ jobs:
     strategy:
       matrix:
         php_version: ["7.4", "8.0", "8.1", "8.2", "8.3"]
-        platform: ["linux/amd64", "linux/arm64"]
       fail-fast: false
 
     permissions:
@@ -45,28 +44,28 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache-matrix
-          key: ${{ runner.os }}-docker-${{ github.sha }}-${{ matrix.php_version }}-${{ matrix.platform }}
+          key: ${{ runner.os }}-docker-${{ github.sha }}-${{ matrix.php_version }}
           restore-keys: |
             ${{ runner.os }}-docker-
 
       - name: Build Docker Image
         run: |
-          echo "Building PHP-CLI image for PHP version ${{ matrix.php_version }} and platform ${{ matrix.platform }}"
+          echo "Building PHP-CLI image for PHP version ${{ matrix.php_version }}"
           cd phpCli
           docker buildx build \
-            --platform ${{ matrix.platform }} \
+            --platform linux/amd64,linux/arm64 \
             --build-arg PHP_VERSION=${{ matrix.php_version }} \
             --cache-from=type=local,src=/tmp/.buildx-cache-matrix \
             --cache-to=type=local,dest=/tmp/.buildx-cache-matrix,mode=max \
-            -t phpcli:${{ matrix.php_version }}-${{ matrix.platform }} \
-            -o type=tar,dest=phpcli-${{ matrix.php_version }}-${{ matrix.platform }}.tar \
+            -t phpcli:${{ matrix.php_version }} \
+            -o type=tar,dest=phpcli-${{ matrix.php_version }}.tar \
             -f dockerfile .
 
       - name: Upload Docker Image Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: phpcli-${{ matrix.php_version }}-${{ matrix.platform }}
-          path: phpCli/phpcli-${{ matrix.php_version }}-${{ matrix.platform }}.tar
+          name: phpcli-${{ matrix.php_version }}
+          path: phpCli/phpcli-${{ matrix.php_version }}.tar
 
   push:
     name: Push Docker Images
@@ -76,7 +75,6 @@ jobs:
     strategy:
       matrix:
         php_version: ["7.4", "8.0", "8.1", "8.2", "8.3"]
-        platform: ["linux/amd64", "linux/arm64"]
       fail-fast: false
 
     permissions:
@@ -87,7 +85,7 @@ jobs:
       - name: Download Docker Image Artifact
         uses: actions/download-artifact@v3
         with:
-          name: phpcli-${{ matrix.php_version }}-${{ matrix.platform }}
+          name: phpcli-${{ matrix.php_version }}
           path: ./phpCli
 
       - name: Set up Docker Buildx
@@ -103,20 +101,18 @@ jobs:
 
       - name: Load Docker Image
         run: |
-          docker load -i ./phpCli/phpcli-${{ matrix.php_version }}-${{ matrix.platform }}.tar
+          docker load -i ./phpCli/phpcli-${{ matrix.php_version }}.tar
 
       - name: Tag Docker Image
         run: |
-          IMAGE_TAG="${{ secrets.DOCKER_USER_NAME }}/phpcli:${{ matrix.php_version }}"
-          docker tag phpcli:${{ matrix.php_version }}-${{ matrix.platform }} $IMAGE_TAG
+          docker tag phpcli:${{ matrix.php_version }} ${{ secrets.DOCKER_USER_NAME }}/phpcli:${{ matrix.php_version }}
           if [ "${{ matrix.php_version }}" = "8.3" ]; then
-            docker tag phpcli:${{ matrix.php_version }}-${{ matrix.platform }} ${{ secrets.DOCKER_USER_NAME }}/phpcli:latest
+            docker tag phpcli:${{ matrix.php_version }} ${{ secrets.DOCKER_USER_NAME }}/phpcli:latest
           fi
 
       - name: Push Docker Image
         run: |
-          IMAGE_TAG="${{ secrets.DOCKER_USER_NAME }}/phpcli:${{ matrix.php_version }}"
-          docker push $IMAGE_TAG
+          docker push ${{ secrets.DOCKER_USER_NAME }}/phpcli:${{ matrix.php_version }}
           if [ "${{ matrix.php_version }}" = "8.3" ]; then
             docker push ${{ secrets.DOCKER_USER_NAME }}/phpcli:latest
           fi
