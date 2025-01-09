@@ -17,7 +17,6 @@ jobs:
     strategy:
       matrix:
         php_version: ["7.4", "8.0", "8.1", "8.2", "8.3"]
-        platform: [linux/amd64, linux/arm64]
       fail-fast: false
 
     permissions:
@@ -54,10 +53,10 @@ jobs:
 
       - name: Build and push Docker version images
         run: |
-          echo "Building PHP-CLI image for PHP version ${{ matrix.php_version }} and platform ${{ matrix.platform }}..."
+          echo "Building PHP-CLI image for PHP version ${{ matrix.php_version }} and platforms linux/amd64, linux/arm64]..."
           cd phpCli
           docker buildx build \
-            --platform ${{ matrix.platform }} \
+            --platform linux/amd64, linux/arm64] \
             --build-arg PHP_VERSION=${{ matrix.php_version }} \
             --cache-from=type=local,src=/tmp/.buildx-cache-matrix \
             --cache-to=type=local,dest=/tmp/.buildx-cache-matrix,mode=max \
