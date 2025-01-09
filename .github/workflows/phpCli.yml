@@ -13,10 +13,10 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
-    # Concurrency break on commit
-   concurrency:
-     group: build-${{ github.ref }}
-     cancel-in-progress: true
+    # Concurrency for commit
+    concurrency:
+      group: build-${{ github.ref }}
+      cancel-in-progress: true
 
     strategy:
       matrix:
