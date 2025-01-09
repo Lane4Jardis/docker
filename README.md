@@ -1,4 +1,4 @@
-# Lane4 Digital Docker Images
+# Lane4 Docker Images
 
 ### Provision of PHP-based docker images for webStacks and console Applications
 

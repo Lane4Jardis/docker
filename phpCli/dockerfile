@@ -17,14 +17,14 @@ RUN apk add --no-cache \
     libxml2-dev \
     oniguruma-dev
 
-# PHP 7.4: Xdebug 3.1.6. >= 8.0: newest xdebug-version
+# PHP 7.4: Xdebug 3.1.6. >= 8.0: newest xdebug-version and redis
 RUN pecl channel-update pecl.php.net \
     && if echo "$PHP_VERSION" | grep -q '7\.4'; then \
-         pecl install xdebug-3.1.6; \
+         pecl install xdebug-3.1.6 redis; \
        else \
-         pecl install xdebug; \
+         pecl install xdebug redis; \
        fi \
-    && docker-php-ext-enable xdebug
+    && docker-php-ext-enable xdebug redis
 
 # install extensions
 RUN docker-php-ext-install pdo pdo_mysql mysqli curl soap dom zip mbstring
