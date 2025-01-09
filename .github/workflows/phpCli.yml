@@ -1,4 +1,5 @@
 name: Build and Push Docker PHP CLI Images
+
 on:
   push:
     paths:
@@ -9,14 +10,14 @@ on:
       - 'phpCli/**'
       - '.github/workflows/phpCli.yml'
 
+# Definieren der Concurrency auf Workflow-Ebene
+concurrency:
+  group: ${{ github.ref }}-build
+  cancel-in-progress: true
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-
-    # Globale Concurrency Group
-    concurrency:
-      group: ${{ github.ref }}-build
-      cancel-in-progress: true
 
     strategy:
       matrix:
