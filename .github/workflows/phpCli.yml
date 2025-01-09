@@ -13,9 +13,9 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
-    # Concurrency for commit
+    # Globale Concurrency Group
     concurrency:
-      group: build-${{ github.ref }}
+      group: ${{ github.ref }}-build
       cancel-in-progress: true
 
     strategy:
@@ -41,7 +41,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache-matrix
-          key: ${{ runner.os }}-docker-${{ github.sha }}
+          key: ${{ runner.os }}-docker-${{ github.sha }}-${{ matrix.php_version }}
           restore-keys: |
             ${{ runner.os }}-docker-
 
