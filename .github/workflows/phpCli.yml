@@ -56,7 +56,7 @@ jobs:
           echo "Building PHP-CLI image for PHP version ${{ matrix.php_version }} and platforms linux/amd64, linux/arm64]..."
           cd phpCli
           docker buildx build \
-            --platform linux/amd64,linux/arm64] \
+            --platform linux/amd64,linux/arm64 \
             --build-arg PHP_VERSION=${{ matrix.php_version }} \
             --cache-from=type=local,src=/tmp/.buildx-cache-matrix \
             --cache-to=type=local,dest=/tmp/.buildx-cache-matrix,mode=max \
