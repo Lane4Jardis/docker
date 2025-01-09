@@ -37,7 +37,7 @@ jobs:
       - name: Cache Docker layers
         uses: actions/cache@v3
         with:
-          path: /tmp/.buildx-cache
+          path: /tmp/.buildx-cache-matrix
           key: ${{ runner.os }}-docker-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-docker-
@@ -45,7 +45,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         with:
-          name: my-builder
+          name: my-builder-matrix
           install: true
           driver-opts: image=moby/buildkit:buildx-stable-1
 
@@ -59,8 +59,8 @@ jobs:
           docker buildx build \
             --platform ${{ matrix.platform }} \
             --build-arg PHP_VERSION=${{ matrix.php_version }} \
-            --cache-from=type=local,src=/tmp/.buildx-cache \
-            --cache-to=type=local,dest=/tmp/.buildx-cache,mode=max \
+            --cache-from=type=local,src=/tmp/.buildx-cache-matrix \
+            --cache-to=type=local,dest=/tmp/.buildx-cache-matrix,mode=max \
             -t ${{ secrets.DOCKER_USER_NAME }}/phpcli:${{ matrix.php_version }} \
             --push \
             -f dockerfile .
@@ -85,7 +85,7 @@ jobs:
       - name: Cache Docker layers
         uses: actions/cache@v3
         with:
-          path: /tmp/.buildx-cache
+          path: /tmp/.buildx-cache-latest
           key: ${{ runner.os }}-docker-latest
           restore-keys: |
             ${{ runner.os }}-docker-
@@ -93,7 +93,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         with:
-          name: my-builder
+          name: my-builder-latest
           install: true
           driver-opts: image=moby/buildkit:buildx-stable-1
 
@@ -107,8 +107,8 @@ jobs:
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             --build-arg PHP_VERSION=8.3 \
-            --cache-from=type=local,src=/tmp/.buildx-cache \
-            --cache-to=type=local,dest=/tmp/.buildx-cache,mode=max \
+            --cache-from=type=local,src=/tmp/.buildx-cache-latest \
+            --cache-to=type=local,dest=/tmp/.buildx-cache-latest,mode=max \
             -t ${{ secrets.DOCKER_USER_NAME }}/phpcli:latest \
             --push \
             -f dockerfile .

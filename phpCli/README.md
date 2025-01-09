@@ -5,9 +5,24 @@
 
 ### Providing Versioned PHP Docker Images for Console Applications
 
-The **Lane4 Digital PHP CLI** tool is designed to deliver cross-platform PHP-CLI Docker images. It supports PHP versions from **7.4 to 8.3**, enabling developers and administrators to create and maintain consistent and reliable environments for their console applications.
+The **Lane4 PHP CLI** tool is designed to deliver cross-platform PHP-CLI Docker images. It supports PHP versions from **7.4 to 8.3**, enabling developers and administrators to create and maintain consistent and reliable environments for their console applications.
 
 Our Docker images are available for both **AMD64** and **ARM64** architectures and are hosted on [Docker Hub](https://hub.docker.com/r/lane4jardis/phpcli). This ensures broad compatibility and allows deployment across various hardware platforms, including modern servers and IoT devices.
+
+### The following components were applied:
+- alpine 7.4 - 8.3 base image
+- xdebug
+- pdo
+- mysql
+- redis
+- curl
+- dom
+- soap
+- zip
+- mbstring
+
+### Image sizes
+- Between 100MB and 107MB :-)
 
 ## Prerequisites
 
